@@ -1,11 +1,19 @@
 const GOOGLE_DOODLE_ENDPOINT = "https://google-doodles.herokuapp.com/doodles/2020/11?hl=en";
 const cardDestination = document.getElementsByClassName("destination")[0];
+const title = document.getElementById('doodleTitle')
+const colorsHex = ['#4285f4', '#34a853', '#fbbc05', '#ea4335'];
+const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const headerLetters = ["T", "o", "d", "a", "y", " ", "i", "n", " ", "G", "o", "o", "g", "l", "e", " ", "D", "o", "o", "d", "l", "e", "s", " ", "H", "i", "s", "t", "o", "r", "y"];
 
 // Will use as the starting day
 const today = new Date();
-// console.log(today.getFullYear())
-// console.log(today.getDate())
-// console.log(today.getMonth())
+const day = today.getDate();
+const month = today.getMonth() + 1;
+const year =today.getFullYear();
+console.log(day);
+console.log(month);
+console.log(year);
+
 
 
 
@@ -18,7 +26,11 @@ function createCard(imageUrl, title, date) {
     let titleElement = createElement("h5", "card-title", title);
     let dateElement = createElement("h5", "card-title", date);
     let anchorContainer = createElement("div", "d-grid col-12 mx-auto");
-    let anchorElement = createElement("a", "btn btn-primary", "What in the doodle?")
+
+    let anchorElement = createElement("a", "btn btn-primary", "What in the doodle?");
+    adjustAttribute(anchorElement, "style",`background-color: ${getRandomColor()};`)
+    anchorElement.addEventListener("mouseover", changeColor)
+    anchorElement.addEventListener("mouseout", changeColor)
 
     anchorContainer.append(anchorElement);
     bodyElement.append(titleElement, dateElement, anchorContainer)
@@ -27,10 +39,20 @@ function createCard(imageUrl, title, date) {
     cardDestination.append(cardElement);
 }
 
+function changeColor(e){
+
+    adjustAttribute(e.target,"style",`background-color: ${getRandomColor()};`);
+}
+
 function adjustAttribute(elem, attribute, value) {
     elem.setAttribute(attribute, value);
 }
 
+function getRandomColor(){
+    let randomColorIndex = generateRandomIndex(colorsHex.length);
+    
+    return colorsHex[randomColorIndex];
+}
 
 function createElement(elementType, classes, innerText = "") {
     const element = document.createElement(elementType);
@@ -43,15 +65,15 @@ function createElement(elementType, classes, innerText = "") {
 
 
 
-function getDoodle() {
-    let month = 11;
-    let year = 2021;
-    let day = 18;
+function getDoodle(day, month, year) {
+    // let month = 11;
+    // let year = 2021;
+    // let day = 18;
 
     let promises = [];
 
     for (let index = year; 1998 <= index; index--) {
-        promises.push(makeFetchCall(index));
+        promises.push(makeFetchCall(index, month));
     }
 
     Promise.all(promises)
@@ -63,7 +85,8 @@ function getDoodle() {
                     let item2 = item.run_date_array;
                     if (item2[1] === month && item2[2] === day) {
                         console.log(item2);
-                        createCard(item.url, item.title, item.title);
+                        let customDate = createCustomDate(item2[2],item2[1], item2[0]);
+                        createCard(item.url, item.title, customDate);
                     }
                 })
             })
@@ -72,15 +95,57 @@ function getDoodle() {
 }
 
 
-async function makeFetchCall(doodleYear) {
-    let response1 = await fetch(`https://google-doodles.herokuapp.com/doodles/${doodleYear}/11?hl=en`);
+async function makeFetchCall(doodleYear, doodleMonth) {
+    let response1 = await fetch(`https://google-doodles.herokuapp.com/doodles/${doodleYear}/${doodleMonth}?hl=en`);
     let json = await response1.json();
     return json;
 }
 
+function generateRandomIndex(size) {
+    return Math.floor(Math.random() * size)
+}
+
+function createCustomDate(day, month, year){
+    let dateString = months[month - 1] + " " + day + ", " + year;
+    return dateString
+}
 
 
-getDoodle();
+function getNewDoodle(form){
+    console.log(form.date.value)
+    console.log(typeof(form.date.value))
+    let textArray = form.date.value.split("/");
+    console.log(parseInt(textArray[0]))
+    console.log(textArray[1])
+    console.log(textArray[2])
+
+    let day = parseInt(textArray[1]);
+    let month =  parseInt(textArray[0]);
+    let year = parseInt(textArray[2]);
+    clearDestination();
+    getDoodle(day, month, year)
+ 
+}
+
+
+function clearDestination(){
+    let element = cardDestination;
+    while (element.firstChild) {
+        element.removeChild(element.firstChild);
+      }
+}
+
+function setUpHeader(){
+    headerLetters.forEach((letter) => {
+        let tempElement =  createElement("span","textFormat", letter)
+        adjustAttribute(tempElement, "style",`color: ${getRandomColor()};`)
+        title.appendChild(tempElement)
+    })
+}
+
+
+setUpHeader();
+getDoodle(day, month, year);
 
 
 
@@ -89,7 +154,7 @@ getDoodle();
 
 
 
-
+//Old code that did not work 
 
 
 // fetch(`https://google-doodles.herokuapp.com/doodles/${year}/11?hl=en`).then((res) => {
