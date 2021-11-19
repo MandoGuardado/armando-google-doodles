@@ -2,19 +2,22 @@ const GOOGLE_DOODLE_ENDPOINT = "https://google-doodles.herokuapp.com/doodles/202
 const cardDestination = document.getElementsByClassName("destination")[0];
 const title = document.getElementById('doodleTitle');
 const doodleButton = document.getElementById("moreDoodleButton");
-console.log("Doodle button" + doodleButton);
+const scrollInputField = document.getElementById("scroll-date");
+const doodleInput= document.getElementById("inputDoodleDate");
+
 const colorsHex = ['#4285f4', '#34a853', '#fbbc05', '#ea4335'];
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const headerLetters = ["T", "o", "d", "a", "y", " ", "i", "n", " ", "G", "o", "o", "g", "l", "e", " ", "D", "o", "o", "d", "l", "e", "s", " ", "H", "i", "s", "t", "o", "r", "y"];
 
 // Will use as the starting day
-const today = new Date();
-const day = today.getDate();
-const month = today.getMonth() + 1;
-const year = today.getFullYear();
-console.log(day);
-console.log(month);
-console.log(year);
+const initialToday = new Date();
+console.log(initialToday.toLocaleDateString());
+const initialDay = initialToday.getDate();
+const initialMonth = initialToday.getMonth() + 1;
+const initialYear = initialToday.getFullYear();
+console.log(initialDay);
+console.log(initialMonth);
+console.log(initialYear);
 
 
 
@@ -80,10 +83,6 @@ function createElement(elementType, classes, innerText = "") {
 
 
 function getDoodle(day, month, year) {
-    // let month = 11;
-    // let year = 2021;
-    // let day = 18;
-
     let promises = [];
 
     for (let index = year; 1998 <= index; index--) {
@@ -126,6 +125,7 @@ function createCustomDate(day, month, year) {
 
 
 function getNewDoodle(form) {
+    dateResult = new Date(form.date.value);
     console.log(form.date.value)
     console.log(typeof (form.date.value))
     let textArray = form.date.value.split("/");
@@ -138,7 +138,7 @@ function getNewDoodle(form) {
     let year = parseInt(textArray[2]);
     clearDestination();
     getDoodle(day, month, year)
-
+    scrollInputField.innerText = createCustomDate(dateResult.getDate(), dateResult.getMonth() + 1, dateResult.getFullYear());
 }
 
 
@@ -158,16 +158,57 @@ function setUpHeader() {
 }
 
 function setUpSearchElement() {
-    adjustAttribute(doodleButton, "style", `Background-color: ${getRandomColor()};`)
-    doodleButton.addEventListener("mouseover", changeColor)
-    doodleButton.addEventListener("mouseout", changeColor)
+    adjustAttribute(doodleButton, "style", `Background-color: ${getRandomColor()};`);
+    doodleButton.addEventListener("mouseover", changeColor);
+    doodleButton.addEventListener("mouseout", changeColor);
+
+    let rightButton = document.getElementById("right-button");
+    rightButton.addEventListener("mouseover", changeColor);
+    rightButton.addEventListener("mouseout", changeColor);
+    rightButton.addEventListener("click", getNextDay);
+    let leftButton = document.getElementById("left-button");
+    leftButton.addEventListener("click", getPreviousDay);
+    leftButton.addEventListener("mouseover", changeColor);
+    leftButton.addEventListener("mouseout", changeColor);
+    scrollInputField.innerText = createCustomDate(initialDay, initialMonth , initialYear);
+    doodleInput.value = initialToday.toLocaleDateString();
+}
+
+function getNextDay(){
+    let stringValue = scrollInputField.innerText;
+    let currentDay = new Date(stringValue);
+    let nextDay =  new Date(currentDay);
+    nextDay.setDate(currentDay.getDate() + 1);  
+    let day = nextDay.getDate();  
+    let month = nextDay.getMonth() + 1;
+    let year = nextDay.getFullYear();
+    scrollInputField.innerText = createCustomDate(day, month , year);
+    doodleInput.value = nextDay.toLocaleDateString();
+    clearDestination();
+    getDoodle(day, month, year);
+}
+
+function getPreviousDay(){
+    let stringValue = scrollInputField.innerText;
+    let currentDay = new Date(stringValue);
+    let previousDay =  new Date(currentDay);
+    previousDay.setDate(currentDay.getDate() - 1);
+    let day = previousDay.getDate();
+    let month = previousDay.getMonth() + 1;
+    let year = previousDay.getFullYear();
+    scrollInputField.innerText = createCustomDate(day, month , year);
+    doodleInput.value = previousDay.toLocaleDateString();
+    clearDestination();
+    getDoodle(day, month, year);
 }
 
 function start() {
     setUpSearchElement();
     setUpHeader();
-    getDoodle(day, month, year);
+    getDoodle(initialDay, initialMonth, initialYear);
 }
+
+
 
 start();
 
