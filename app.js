@@ -31,6 +31,9 @@ function createCard(imageUrl, title, date) {
 
     let anchorElement = createElement("a", "btn btn-primary", "What in the doodle?");
     adjustAttribute(anchorElement, "style", `background-color: ${getRandomColor()};`)
+    adjustAttribute(anchorElement, "href", createGoogleHref(title, date))
+    adjustAttribute(anchorElement, "target", "_blank")
+
     anchorElement.addEventListener("mouseover", changeColor)
     anchorElement.addEventListener("mouseout", changeColor)
 
@@ -39,6 +42,15 @@ function createCard(imageUrl, title, date) {
     cardElement.append(imgElement, bodyElement);
 
     cardDestination.append(cardElement);
+}
+
+function createGoogleHref(title, date){
+    let searchUrl =  "https://www.google.com/search?q="
+    let customerHref;
+    let customerTitle = title.replaceAll(' ', '%20');
+    let customDate = date.replaceAll(' ', '%20');
+    customerHref =searchUrl + customerTitle + "%20" + customDate;
+    return customerHref;
 }
 
 function changeColor(e) {
@@ -88,7 +100,7 @@ function getDoodle(day, month, year) {
                     if (item2[1] === month && item2[2] === day) {
                         console.log(item2);
                         let customDate = createCustomDate(item2[2], item2[1], item2[0]);
-                        createCard(item.url, item.title, customDate);
+                        createCard(item.url, item.query, customDate);
                     }
                 })
             })
@@ -159,6 +171,7 @@ function start() {
 
 start();
 
+// console.log(createGoogleHref("Museo del Prado", "November 19 2020"));
 
 
 
