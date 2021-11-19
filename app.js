@@ -1,6 +1,8 @@
 const GOOGLE_DOODLE_ENDPOINT = "https://google-doodles.herokuapp.com/doodles/2020/11?hl=en";
 const cardDestination = document.getElementsByClassName("destination")[0];
-const title = document.getElementById('doodleTitle')
+const title = document.getElementById('doodleTitle');
+const doodleButton = document.getElementById("moreDoodleButton");
+console.log("Doodle button" + doodleButton);
 const colorsHex = ['#4285f4', '#34a853', '#fbbc05', '#ea4335'];
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const headerLetters = ["T", "o", "d", "a", "y", " ", "i", "n", " ", "G", "o", "o", "g", "l", "e", " ", "D", "o", "o", "d", "l", "e", "s", " ", "H", "i", "s", "t", "o", "r", "y"];
@@ -9,7 +11,7 @@ const headerLetters = ["T", "o", "d", "a", "y", " ", "i", "n", " ", "G", "o", "o
 const today = new Date();
 const day = today.getDate();
 const month = today.getMonth() + 1;
-const year =today.getFullYear();
+const year = today.getFullYear();
 console.log(day);
 console.log(month);
 console.log(year);
@@ -28,7 +30,7 @@ function createCard(imageUrl, title, date) {
     let anchorContainer = createElement("div", "d-grid col-12 mx-auto");
 
     let anchorElement = createElement("a", "btn btn-primary", "What in the doodle?");
-    adjustAttribute(anchorElement, "style",`background-color: ${getRandomColor()};`)
+    adjustAttribute(anchorElement, "style", `background-color: ${getRandomColor()};`)
     anchorElement.addEventListener("mouseover", changeColor)
     anchorElement.addEventListener("mouseout", changeColor)
 
@@ -39,18 +41,18 @@ function createCard(imageUrl, title, date) {
     cardDestination.append(cardElement);
 }
 
-function changeColor(e){
+function changeColor(e) {
 
-    adjustAttribute(e.target,"style",`background-color: ${getRandomColor()};`);
+    adjustAttribute(e.target, "style", `background-color: ${getRandomColor()};`);
 }
 
 function adjustAttribute(elem, attribute, value) {
     elem.setAttribute(attribute, value);
 }
 
-function getRandomColor(){
+function getRandomColor() {
     let randomColorIndex = generateRandomIndex(colorsHex.length);
-    
+
     return colorsHex[randomColorIndex];
 }
 
@@ -85,7 +87,7 @@ function getDoodle(day, month, year) {
                     let item2 = item.run_date_array;
                     if (item2[1] === month && item2[2] === day) {
                         console.log(item2);
-                        let customDate = createCustomDate(item2[2],item2[1], item2[0]);
+                        let customDate = createCustomDate(item2[2], item2[1], item2[0]);
                         createCard(item.url, item.title, customDate);
                     }
                 })
@@ -105,47 +107,60 @@ function generateRandomIndex(size) {
     return Math.floor(Math.random() * size)
 }
 
-function createCustomDate(day, month, year){
+function createCustomDate(day, month, year) {
     let dateString = months[month - 1] + " " + day + ", " + year;
     return dateString
 }
 
 
-function getNewDoodle(form){
+function getNewDoodle(form) {
     console.log(form.date.value)
-    console.log(typeof(form.date.value))
+    console.log(typeof (form.date.value))
     let textArray = form.date.value.split("/");
     console.log(parseInt(textArray[0]))
     console.log(textArray[1])
     console.log(textArray[2])
 
     let day = parseInt(textArray[1]);
-    let month =  parseInt(textArray[0]);
+    let month = parseInt(textArray[0]);
     let year = parseInt(textArray[2]);
     clearDestination();
     getDoodle(day, month, year)
- 
+
 }
 
 
-function clearDestination(){
+function clearDestination() {
     let element = cardDestination;
     while (element.firstChild) {
         element.removeChild(element.firstChild);
-      }
+    }
 }
 
-function setUpHeader(){
+function setUpHeader() {
     headerLetters.forEach((letter) => {
-        let tempElement =  createElement("span","textFormat", letter)
-        adjustAttribute(tempElement, "style",`color: ${getRandomColor()};`)
+        let tempElement = createElement("span", "textFormat", letter)
+        adjustAttribute(tempElement, "style", `color: ${getRandomColor()};`)
         title.appendChild(tempElement)
     })
 }
 
+function setUpSearchElement() {
+    adjustAttribute(doodleButton, "style", `Background-color: ${getRandomColor()};`)
+    doodleButton.addEventListener("mouseover", changeColor)
+    doodleButton.addEventListener("mouseout", changeColor)
+}
 
-setUpHeader();
-getDoodle(day, month, year);
+function start() {
+    setUpSearchElement();
+    setUpHeader();
+    getDoodle(day, month, year);
+}
+
+start();
+
+
+
 
 
 
