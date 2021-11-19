@@ -13,4 +13,22 @@ h5{
     font-size:  0.85em;
     text-align: center;
     font-family: 'Courier New', Courier, monospace;
+    
+}
+
+
+
+.textFormat{
+
+    font-size:4rem;
+    font-style: italic;
+    font-family:'Sedgwick Ave Display', cursive;
+    font-weight:100;
+}
+
+#doodleTitle{
+    text-align: center;
+    margin-bottom: 20px;
+    margin-top: 20px;
+
 }
