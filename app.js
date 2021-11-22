@@ -4,6 +4,8 @@ const title = document.getElementById('doodleTitle');
 const doodleButton = document.getElementById("moreDoodleButton");
 const scrollInputField = document.getElementById("scroll-date");
 const doodleInput= document.getElementById("inputDoodleDate");
+const scrollFeature = document.getElementById("scrollSearch");
+const inputFeature = document.getElementById("inputForm")
 
 const colorsHex = ['#4285f4', '#34a853', '#fbbc05', '#ea4335'];
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -88,7 +90,6 @@ function getDoodle(day, month, year) {
     for (let index = year; 1998 <= index; index--) {
         promises.push(makeFetchCall(index, month));
     }
-
     Promise.all(promises)
         .then((results) => {
             // console.log(results[0]);
@@ -106,7 +107,6 @@ function getDoodle(day, month, year) {
         }).catch((err) => console.log(err));
 
 }
-
 
 async function makeFetchCall(doodleYear, doodleMonth) {
     let response1 = await fetch(`https://google-doodles.herokuapp.com/doodles/${doodleYear}/${doodleMonth}?hl=en`);
@@ -171,7 +171,22 @@ function setUpSearchElement() {
     leftButton.addEventListener("mouseover", changeColor);
     leftButton.addEventListener("mouseout", changeColor);
     scrollInputField.innerText = createCustomDate(initialDay, initialMonth , initialYear);
+    scrollInputField.addEventListener("mouseover", unhideInputDate)
+    inputFeature.addEventListener("mouseout", hideInputDate )
     doodleInput.value = initialToday.toLocaleDateString();
+    
+}
+
+function unhideInputDate(){
+    scrollFeature.classList.add("display-feature")
+    inputFeature.classList.remove("display-feature")
+
+
+}
+function hideInputDate(){
+    scrollFeature.classList.remove("display-feature")
+    inputFeature.classList.add("display-feature")
+
 }
 
 function getNextDay(){
